@@ -1,4 +1,4 @@
-package com.efe.dataTable
+package com.efe.dataTable.sample
 
 data class PlayerStats(
     val playerId: Long,

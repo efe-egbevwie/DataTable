@@ -1,22 +1,72 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop.
+## DataTable
+A compose multiplatform library for rendering data in tables
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+### Usage
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+```kotlin
+@Composable
+fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier) {
+    DataTable(
+        tableModifier = modifier,
+        headerRowModifier = Modifier
+            .background(color = MaterialTheme.colors.secondary),
+        rowModifier = Modifier.border(1.dp, color = MaterialTheme.colors.onSurface),
+        verticalLazyListState = rememberLazyListState(),
+        horizontalScrollState = rememberScrollState(),
+        columnCount = 5,
+        rowCount = gameStats.size,
+        cellContent = { columnIndex: Int, rowIndex: Int ->
+            val cellText = when (columnIndex) {
+                0 -> gameStats[rowIndex].playerName
+                1 -> gameStats[rowIndex].minutesPlayed.toString()
+                2 -> gameStats[rowIndex].points.toString()
+                3 -> gameStats[rowIndex].rebounds.toString()
+                4 -> gameStats[rowIndex].assists.toString()
+                else -> ""
+            }
+
+            SelectionContainer {
+                Text(
+                    text = cellText,
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    textAlign = TextAlign.End
+                )
+            }
+        },
+        tableHeaderContent = { columnIndex: Int ->
+            val columnText = when (columnIndex) {
+                0 -> "Player"
+                1 -> "Minutes played"
+                2 -> "Points"
+                3 -> "Rebounds"
+                4 -> "Assists"
+                else -> ""
+            }
+
+            Text(
+                text = columnText,
+                color = MaterialTheme.colors.onSecondary,
+                modifier = Modifier.padding(16.dp),
+                textAlign = TextAlign.Start
+            )
+        }
+    )
+}
+```
+<br>
+<br>
+<br>
+
+### Android
+<img alt="Android" title="Android" src=media/dataTable_android.gif width="70%" height="70%">
 
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
 
-**Note:** Compose/Web is Experimental and may be changed at any time. Use it only for evaluation purposes.
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [GitHub](https://github.com/JetBrains/compose-multiplatform/issues).
+<br>
+<br>
 
-You can open the web application by running the `:composeApp:wasmJsBrowserDevelopmentRun` Gradle task.
+
+### Desktop
+<img alt="Desktop" title="Desktop" src=media/dataTable_desktop.gif width="600" height="330">
+
+

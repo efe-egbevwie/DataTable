@@ -18,4 +18,6 @@ dependencyResolutionManagement {
     }
 }
 
-include(":composeApp")
+//include(":composeApp")
+include(":sample:composeApp")
+include(":lib")

@@ -1,4 +1,4 @@
-package com.efe.dataTable.sample
+package dataTable.sample
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.efe.dataTable.DataTable
+import com.efe.dataTable.sample.PlayerStats
 
 @Composable
 fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier) {

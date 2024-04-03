@@ -20,4 +20,4 @@ dependencyResolutionManagement {
 
 //include(":composeApp")
 include(":sample:composeApp")
-include(":lib")
+include(":data-table-lib")

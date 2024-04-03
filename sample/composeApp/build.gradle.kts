@@ -49,7 +49,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
-            implementation(project(":lib"))
+            implementation(project(":data-table-lib"))
 
             implementation(compose.runtime)
             implementation(compose.foundation)

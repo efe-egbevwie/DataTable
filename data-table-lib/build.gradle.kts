@@ -1,10 +1,26 @@
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import java.net.URI
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
+    id("maven-publish")
+
+}
+
+group = "com.github.efe-egbevwie"
+version = "1.0"
+
+publishing {
+    repositories {
+        maven {
+            url = URI("https:jitpack.io")
+        }
+        mavenCentral()
+        google()
+    }
 }
 
 kotlin {
@@ -18,17 +34,18 @@ kotlin {
         }
         binaries.executable()
     }
-    
+
     androidTarget {
+        publishAllLibraryVariants()
         compilations.all {
             kotlinOptions {
                 jvmTarget = "1.8"
             }
         }
     }
-    
+
     jvm("desktop")
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -39,13 +56,14 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(kotlin("stdlib-jdk8"))
         }
         commonMain.dependencies {
             implementation(compose.runtime)

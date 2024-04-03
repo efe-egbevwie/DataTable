@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "com.github.efe-egbevwie"
-version = "1.0.1"
+version = "1.0.2"
 
 publishing {
     repositories {
@@ -114,7 +114,7 @@ publishing{
         create<MavenPublication>("maven"){
             groupId = "com.github.efe-egbevwie"
             artifactId = "dataTable"
-            version = "1.0.1"
+            version = "1.0.2"
         }
     }
 }

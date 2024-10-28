@@ -1,5 +1,18 @@
 ## DataTable
+
 A compose multiplatform library for rendering data in tables
+
+### Dependency
+
+```
+repositories {  
+    mavenCentral()
+}
+```
+
+```
+implementation("io.github.efe-egbevwie:dataTable:0.0.2")
+```
 
 ### Usage
 
@@ -53,11 +66,13 @@ fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier)
     )
 }
 ```
+
 <br>
 <br>
 <br>
 
 ### Android
+
 <img alt="Android" title="Android" src=media/dataTable_android.gif width="70%" height="70%">
 
 
@@ -65,8 +80,8 @@ fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier)
 <br>
 <br>
 
-
 ### Desktop
+
 <img alt="Desktop" title="Desktop" src=media/dataTable_desktop.gif width="600" height="330">
 
 

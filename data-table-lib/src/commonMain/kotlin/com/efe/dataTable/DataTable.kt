@@ -20,7 +20,7 @@ import androidx.compose.ui.layout.layout
 
 
 /**
- * Composable function that creates a DataTable with sticky header and scrollable content.
+ * Creates a DataTable with sticky header and scrollable content.
  *
  * @param tableModifier Modifier for the entire DataTable.
  * @param rowModifier Modifier for individual data rows.
@@ -49,20 +49,15 @@ fun DataTable(
     tableHeaderContent: @Composable (columnIndex: Int) -> Unit,
     cellContent: @Composable (columnIndex: Int, rowIndex: Int) -> Unit,
 ) {
-
     // Mutable state to store column widths for proper cell layout
     val columnWidths = remember { mutableStateMapOf<Int, Int>() }
 
     // Box containing the entire DataTable with horizontal scrolling
     Box(modifier = tableModifier.then(Modifier.horizontalScroll(horizontalScrollState))) {
-
-        // LazyColumn for vertical scrolling
         LazyColumn(state = verticalLazyListState) {
-
             // Sticky header renders a row that contains the content for the table header
             // the number of items in this row corresponds to the columnCount parameter.
             stickyHeader {
-
                 TableRow(
                     rowIndex = 0,
                     isHeader = true,
@@ -75,15 +70,9 @@ fun DataTable(
                     tableCellContent = cellContent,
                     tableHeaderContent = tableHeaderContent
                 )
-
             }
 
-
-
-
             items(rowCount) { rowIndex ->
-
-
                 TableRow(
                     rowIndex,
                     isHeader = false,
@@ -96,12 +85,8 @@ fun DataTable(
                     tableCellContent = cellContent,
                     tableHeaderContent = tableHeaderContent
                 )
-
-
             }
         }
-
-
     }
 }
 
@@ -136,11 +121,8 @@ private fun TableRow(
     tableCellContent: @Composable (columnIndex: Int, rowIndex: Int) -> Unit,
 ) {
     Surface {
-
-
         Column(modifier = if (isHeader) headerRowModifier else tableRowModifier) {
             beforeRow?.invoke(rowIndex)
-
             Row {
                 (0 until columnCount).forEach { columnIndex ->
                     Box(
@@ -167,13 +149,8 @@ private fun TableRow(
                         }
                     }
                 }
-
-
             }
-
             afterRow?.invoke(rowIndex)
         }
     }
-
 }
-

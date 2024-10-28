@@ -1,23 +1,19 @@
+import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-import java.net.URI
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
-    id("maven-publish")
-
+    id("com.vanniktech.maven.publish") version "0.30.0"
 }
 
-group = "com.github.efe-egbevwie"
-version = "1.0.2"
+group = "io.github.efe-egbevwie"
+version = "0.0.2"
 
 publishing {
     repositories {
-        maven {
-            url = URI("https:jitpack.io")
-        }
         mavenCentral()
         google()
     }
@@ -109,12 +105,45 @@ android {
     }
 }
 
-publishing{
-    publications {
-        create<MavenPublication>("maven"){
-            groupId = "com.github.efe-egbevwie"
-            artifactId = "dataTable"
-            version = "1.0.2"
+
+mavenPublishing {
+    coordinates(
+        groupId = "io.github.efe-egbevwie",
+        artifactId = "dataTable",
+        version = "0.0.2"
+    )
+
+    pom {
+        name.set("DataTable")
+        description.set("A library for displaying data in a table for compose multiplatform apps.")
+        inceptionYear.set("2024") //or year of publication
+        url.set("https://github.com/efe-egbevwie/DataTable")
+
+        licenses {
+            license {
+                name.set("MIT")
+                url.set("https://opensource.org/licenses/MIT")
+            }
         }
+
+        developers {
+            developer {
+                id.set("efe-egbevwie")
+                name.set("Efe Egbevwie")
+                email.set("efe1705@gmail.com")
+            }
+        }
+
+        scm {
+            url.set("https://github.com/efe-egbevwie/DataTable")
+        }
+    }
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
+}
+
+kotlin {
+    androidTarget {
+        publishLibraryVariants("release")
     }
 }

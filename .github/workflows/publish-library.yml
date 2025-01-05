@@ -57,4 +57,4 @@ jobs:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
-          ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache --info --stack
+          ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache --info --stacktrace --scan

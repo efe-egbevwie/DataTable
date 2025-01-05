@@ -1,4 +1,4 @@
-package com.efe.dataTable.sample
+package dataTable.sample
 
 val gameStatsList = buildList {
     add(

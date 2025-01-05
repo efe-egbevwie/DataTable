@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dataTable.sample.DataTableSample
-import com.efe.dataTable.sample.gameStatsList
+import dataTable.sample.gameStatsList
 
 @Composable
 fun App() {

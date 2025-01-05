@@ -1,5 +1,4 @@
 import com.vanniktech.maven.publish.SonatypeHost
-import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
@@ -10,7 +9,7 @@ plugins {
 }
 
 group = "io.github.efe-egbevwie"
-version = "0.0.2"
+version = "0.0.6"
 
 publishing {
     repositories {
@@ -54,23 +53,10 @@ kotlin {
     }
 
     sourceSets {
-        val desktopMain by getting
-
-        androidMain.dependencies {
-            implementation(libs.compose.ui.tooling.preview)
-            implementation(libs.androidx.activity.compose)
-            implementation(kotlin("stdlib-jdk8"))
-        }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
             implementation(compose.ui)
-            @OptIn(ExperimentalComposeLibrary::class)
-            implementation(compose.components.resources)
-        }
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
         }
     }
 }
@@ -110,7 +96,7 @@ mavenPublishing {
     coordinates(
         groupId = "io.github.efe-egbevwie",
         artifactId = "dataTable",
-        version = "0.0.2"
+        version = "0.0.6"
     )
 
     pom {

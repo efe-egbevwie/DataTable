@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsCompose)
     id("com.vanniktech.maven.publish") version "0.30.0"
+    id("signing")
 }
 
 group = "io.github.efe-egbevwie"
@@ -91,8 +92,22 @@ android {
     }
 }
 
+signing{
+    useInMemoryPgpKeys(
+        System.getenv("SIGNING_KEY"),
+        System.getenv("SIGNING_KEY_PASSWORD")
+    )
+    sign(publishing.publications)
+
+    // Temporary workaround, see https://github.com/gradle/gradle/issues/26091#issuecomment-1722947958
+    tasks.withType<AbstractPublishToMaven>().configureEach {
+        val signingTasks = tasks.withType<Sign>()
+        mustRunAfter(signingTasks)
+    }
+}
 
 mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     coordinates(
         groupId = "io.github.efe-egbevwie",
         artifactId = "dataTable",
@@ -124,8 +139,6 @@ mavenPublishing {
             url.set("https://github.com/efe-egbevwie/DataTable")
         }
     }
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-    signAllPublications()
 }
 
 kotlin {

@@ -83,6 +83,9 @@ fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier)
 <br>
 <br>
 
+### ios
+<img alt="ios" title="ios" src="media/dataTable_ios.gif">
+
 ### Desktop
 
 <img alt="Desktop" title="Desktop" src=media/dataTable_desktop.gif width="600" height="330">

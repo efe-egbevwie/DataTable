@@ -89,5 +89,5 @@ fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier)
 
 ### Web(Wasm)
 
-<img alt="Web" title="Web" src="media/dataTable_web.gif">
+<img alt="Web" title="Web" src="media/dataTable_web.gif" width>
 

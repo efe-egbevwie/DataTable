@@ -1,7 +1,9 @@
 package com.efe.dataTable
 
 import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -16,6 +18,8 @@ import androidx.compose.ui.unit.Dp
 
 /**
  * Creates a DataTable with sticky header and scrollable content.
+ * Rows will be rendered lazily, which may cause caolumn widths to be resized. If this is not desired
+ * try the DataTable() composable
  *
  * @param tableModifier Modifier for the entire DataTable.
  * @param verticalLazyListState ScrollState for the vertical scroll state.
@@ -30,7 +34,7 @@ import androidx.compose.ui.unit.Dp
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DataTable(
+fun LazyDataTable(
     tableModifier: Modifier = Modifier,
     verticalLazyListState: LazyListState = rememberLazyListState(),
     horizontalScrollState: ScrollState = rememberScrollState(),
@@ -65,7 +69,7 @@ fun DataTable(
             }
 
             items(rowCount) { rowIndex ->
-                Column (modifier = Modifier.background(tableBackgroundColor)){
+                Column(modifier = Modifier.background(tableBackgroundColor)) {
                     TableRow(
                         rowIndex,
                         isHeader = false,
@@ -81,6 +85,82 @@ fun DataTable(
                     divider(rowWidth.pxToDp())
                 }
             }
+        }
+    }
+}
+
+
+/**
+ * Creates a DataTable with a header and scrollable content.
+ * This will render all rows at once. For lazily rendered table, try the LazyDataTable() composable
+ *
+ * @param tableModifier Modifier for the entire DataTable.
+ * @param verticalScrollState ScrollState for the vertical scroll state.
+ * @param horizontalScrollState ScrollState for the horizontal scroll state.
+ * @param columnCount Number of columns in the DataTable.
+ * @param rowCount Number of rows in the DataTable, should correspond to the number of items in your list.
+ * @param headerBackgroundColor Background Color for the table header row
+ * @param tableBackgroundColor Background color for all rows excluding the header roq
+ * @param tableHeaderContent composable to define the content of the table header cell.
+ * @param divider Optional divider composable. Provides the max width of all the rows for uniformity
+ * @param cellContent composable to define the content of each data cell.
+ */
+@Composable
+fun DataTable(
+    tableModifier: Modifier = Modifier,
+    verticalScrollState: ScrollState = rememberScrollState(),
+    horizontalScrollState: ScrollState = rememberScrollState(),
+    columnCount: Int,
+    rowCount: Int,
+    headerBackgroundColor: Color,
+    tableBackgroundColor: Color = Color.Unspecified,
+    tableHeaderContent: @Composable (columnIndex: Int) -> Unit,
+    divider: @Composable (rowWidth: Dp) -> Unit = {},
+    cellContent: @Composable (columnIndex: Int, rowIndex: Int) -> Unit,
+) {
+    val columnWidths = remember { mutableStateMapOf<Int, Int>() }
+    Box(modifier = tableModifier) {
+        var rowWidth by remember { mutableStateOf(0) }
+        Column {
+            Box(modifier = Modifier
+                .background(headerBackgroundColor)
+                .horizontalScroll(horizontalScrollState)) {
+                TableRow(
+                    rowIndex = 0,
+                    isHeader = true,
+                    columnCount = columnCount,
+                    backgroundColor = headerBackgroundColor,
+                    columnWidths = columnWidths,
+                    tableHeaderContent = tableHeaderContent,
+                    tableCellContent = cellContent,
+                    rowWidth = {}
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .horizontalScroll(horizontalScrollState)
+                    .verticalScroll(state = verticalScrollState)
+            ) {
+                repeat(times = rowCount) { rowIndex ->
+                    Column(modifier = Modifier.background(tableBackgroundColor)) {
+                        TableRow(
+                            rowIndex,
+                            isHeader = false,
+                            columnCount = columnCount,
+                            backgroundColor = tableBackgroundColor,
+                            columnWidths = columnWidths,
+                            tableHeaderContent = tableHeaderContent,
+                            tableCellContent = cellContent,
+                            rowWidth = {
+                                rowWidth = it
+                            }
+                        )
+                        divider(rowWidth.pxToDp())
+                    }
+                }
+            }
+
         }
     }
 }

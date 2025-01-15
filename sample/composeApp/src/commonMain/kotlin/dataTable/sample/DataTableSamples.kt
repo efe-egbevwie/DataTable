@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.efe.dataTable.DataTable
+import com.efe.dataTable.LazyDataTable
 
 @Composable
 fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier) {
@@ -21,7 +22,7 @@ fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier)
         tableModifier = modifier,
         headerBackgroundColor = MaterialTheme.colors.primaryVariant,
         tableBackgroundColor = MaterialTheme.colors.background,
-        verticalLazyListState = rememberLazyListState(),
+        verticalScrollState = rememberScrollState(),
         horizontalScrollState = rememberScrollState(),
         columnCount = 5,
         rowCount = gameStats.size,

@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "io.github.efe-egbevwie"
-version = "0.0.6"
+version = "0.1.0"
 
 publishing {
     repositories {
@@ -111,7 +111,7 @@ mavenPublishing {
     coordinates(
         groupId = "io.github.efe-egbevwie",
         artifactId = "dataTable",
-        version = "0.0.6"
+        version = "0.1.0"
     )
 
     pom {

@@ -1,6 +1,10 @@
 ## DataTable
 
-A compose multiplatform library for rendering data in tables
+A compose multiplatform library for rendering data in tables. Supports:
+- Android
+- ios
+- Web(Wasm)
+- Desktop
 
 ### Dependency
 
@@ -11,7 +15,7 @@ repositories {
 ```
 
 ```
-implementation("io.github.efe-egbevwie:dataTable:0.0.2")
+implementation("io.github.efe-egbevwie:dataTable:0.5.0")
 ```
 
 ### Usage
@@ -19,20 +23,12 @@ implementation("io.github.efe-egbevwie:dataTable:0.0.2")
 ```kotlin
 @Composable
 fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier) {
-    DataTable(
-        tableModifier = modifier,
-        headerBackgroundColor = MaterialTheme.colors.primaryVariant,
-        tableBackgroundColor = MaterialTheme.colors.background,
-        verticalLazyListState = rememberLazyListState(),
-        horizontalScrollState = rememberScrollState(),
+    LazyDataTable(
+        modifier = modifier,
+        headerBackgroundColor = Color(0XFF2a3340),
+        tableBackgroundColor = Color(0xFF1f3952),
         columnCount = 5,
         rowCount = gameStats.size,
-        divider = { rowWidth ->
-            Divider(
-                color = MaterialTheme.colors.onBackground,
-                modifier = Modifier.width(rowWidth).padding(top = 8.dp, bottom = 8.dp)
-            )
-        },
         tableHeaderContent = { columnIndex: Int ->
             val columnText = when (columnIndex) {
                 0 -> "Player"
@@ -45,8 +41,11 @@ fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier)
 
             Text(
                 text = columnText,
-                color = MaterialTheme.colors.onPrimary,
-                modifier = Modifier.padding(16.dp),
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp),
                 textAlign = TextAlign.Start
             )
         },
@@ -63,9 +62,11 @@ fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier)
             SelectionContainer {
                 Text(
                     text = cellText,
-                    color = MaterialTheme.colors.onBackground,
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    textAlign = TextAlign.End
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.White,
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp),
+                    textAlign = TextAlign.Start
                 )
             }
         }
@@ -78,7 +79,7 @@ fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier)
 
 ### Android
 
-<img alt="Android" title="Android" src=media/dataTable_android.gif width="70%" height="70%">
+<img alt="Android" title="Android" src=media/dataTable-sample-android.gif width="800" height="1689">
 
 <br>
 <br>
@@ -88,9 +89,9 @@ fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier)
 
 ### Desktop
 
-<img alt="Desktop" title="Desktop" src=media/dataTable_desktop.gif width="600" height="330">
+<img alt="Desktop" title="Desktop" src=media/dataTable-sample-desktop.gif>
 
 ### Web(Wasm)
 
-<img alt="Web" title="Web" src="media/dataTable_web.gif" width>
+<img alt="Web" title="Web" src="media/dataTable-sample-web.gif">
 

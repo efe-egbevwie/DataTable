@@ -1,15 +1,35 @@
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import dataTable.sample.DataTableSample
 import dataTable.sample.gameStatsList
 
 @Composable
 fun App() {
-    MaterialTheme {
-        DataTableSample(gameStats = gameStatsList, modifier = Modifier.padding(10.dp))
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Column (
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(800.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            DataTableSample(
+                gameStats = gameStatsList,
+                modifier = Modifier
+                    .height(400.dp)
+                    .padding(10.dp)
+                    .clip(shape = RoundedCornerShape(10.dp))
+            )
+        }
     }
 }
 

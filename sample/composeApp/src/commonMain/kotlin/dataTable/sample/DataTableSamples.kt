@@ -1,37 +1,25 @@
 package dataTable.sample
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.efe.dataTable.DataTable
-import com.efe.dataTable.LazyDataTable
 
 @Composable
 fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier) {
     DataTable(
-        tableModifier = modifier,
-        headerBackgroundColor = MaterialTheme.colors.primaryVariant,
-        tableBackgroundColor = MaterialTheme.colors.background,
-        verticalScrollState = rememberScrollState(),
-        horizontalScrollState = rememberScrollState(),
+        modifier = modifier,
+        headerBackgroundColor = Color(0XFF2a3340),
+        tableBackgroundColor = Color(0xFF1f3952),
         columnCount = 5,
         rowCount = gameStats.size,
-        divider = { rowWidth ->
-            Divider(
-                color = MaterialTheme.colors.onBackground,
-                modifier = Modifier.width(rowWidth).padding(top = 8.dp, bottom = 8.dp)
-            )
-        },
         tableHeaderContent = { columnIndex: Int ->
             val columnText = when (columnIndex) {
                 0 -> "Player"
@@ -44,8 +32,11 @@ fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier)
 
             Text(
                 text = columnText,
-                color = MaterialTheme.colors.onPrimary,
-                modifier = Modifier.padding(16.dp),
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp),
                 textAlign = TextAlign.Start
             )
         },
@@ -62,9 +53,11 @@ fun DataTableSample(gameStats: List<PlayerStats>, modifier: Modifier = Modifier)
             SelectionContainer {
                 Text(
                     text = cellText,
-                    color = MaterialTheme.colors.onBackground,
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    textAlign = TextAlign.End
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.White,
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp),
+                    textAlign = TextAlign.Start
                 )
             }
         }

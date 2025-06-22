@@ -1,11 +1,13 @@
 package com.efe.dataTable
 
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -30,7 +33,7 @@ import androidx.compose.ui.unit.dp
 
 /**
  * Displays data in a table format with lazy loading for rows.
- * 
+ *
  * @param defaultColumnWidth The default width for all columns if not specified individually
  * @param modifier Modifier to be applied to the table layout
  * @param verticalLazyListState State object that can be used to control and observe vertical scrolling
@@ -49,7 +52,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DataTable(
-    defaultColumnWidth: Dp = 180.dp,
+    defaultColumnWidth: Dp? = null,
     modifier: Modifier = Modifier,
     verticalLazyListState: LazyListState = rememberLazyListState(),
     horizontalScrollState: ScrollState = rememberScrollState(),
@@ -75,73 +78,86 @@ fun DataTable(
     cellContent: @Composable ((Int, Int) -> Unit),
 ) {
 
-    val columnWidths = remember {
-        mutableStateMapOf<Int, Dp>().apply {
-            repeat(columnCount) { columnIndex ->
-                this[columnIndex] = defaultColumnWidth
-            }
-        }
+    var columnWidths = remember {
+        mutableStateMapOf<Int, Dp>()
     }
-
-
     val density = LocalDensity.current.density
+    val fallBackColumnWidth = 180.dp
 
     val onColumnWidthChange = { columnIndex: Int, delta: Float ->
-        val currentWidth = columnWidths[columnIndex] ?: defaultColumnWidth
+        val currentWidth = columnWidths[columnIndex] ?: fallBackColumnWidth
         val newWidth = (currentWidth.value + delta / density).dp
-        // Ensure column width doesn't go below a minimum value
-        if (newWidth.value >= 50f) {
+        if (newWidth.value >= 48f) {
             columnWidths[columnIndex] = newWidth
         }
     }
 
-    Box(
+
+    BoxWithConstraints(
         modifier = modifier
-            .horizontalScroll(horizontalScrollState)
     ) {
         var rowWidth by remember { mutableStateOf(0) }
+        val constraints = this
+        val maxWidth = constraints.maxWidth
+        val singleColumnWidth = (maxWidth / (columnCount + 1))
 
-        LazyColumn(state = verticalLazyListState) {
-            // Sticky header renders a row that contains the content for the table header
-            // the number of items in this row corresponds to the columnCount parameter.
-            stickyHeader {
-                Column(modifier = Modifier.background(color = headerBackgroundColor)) {
+        if (defaultColumnWidth != null) {
+            columnWidths = buildColumnWidths {
+                repeat(columnCount) { columnIndex ->
+                    this[columnIndex] = defaultColumnWidth
+                }
+            }
+        } else {
+            columnWidths = buildColumnWidths {
+                repeat(columnCount) { columnIndex ->
+                    this[columnIndex] = singleColumnWidth
+                }
+            }
+        }
+
+
+        Box(
+            modifier = Modifier
+                .horizontalScroll(horizontalScrollState)
+        ) {
+            Column {
+                Box(modifier = Modifier.background(color = headerBackgroundColor)) {
                     HeaderRow(
                         columnCount = columnCount,
-                        defaultColumnWidth = defaultColumnWidth,
+                        defaultColumnWidth = defaultColumnWidth ?: fallBackColumnWidth,
                         tableHeaderContent = tableHeaderContent,
                         columnWidths = columnWidths,
                         onColumnWidthChange = onColumnWidthChange,
                         columnDivider = columnDivider,
-                        onColumnClicked = onColumnClicked
+                        onColumnClicked = onColumnClicked,
                     )
                 }
-            }
+                LazyColumn(state = verticalLazyListState) {
+                    items(rowCount) { rowIndex ->
+                        Column(modifier = Modifier.background(tableBackgroundColor)) {
+                            TableRow(
+                                rowIndex = rowIndex,
+                                columnCount = columnCount,
+                                maxColumnWidth = defaultColumnWidth ?: fallBackColumnWidth,
+                                tableCellContent = cellContent,
+                                columnDivider = columnDivider,
+                                columnWidths = columnWidths,
+                                modifier = Modifier
+                                    .onGloballyPositioned { rowWidth = it.size.width }
+                                    .clickable {
+                                        onRowClicked(rowIndex)
+                                    },
+                            )
 
-            items(rowCount) { rowIndex ->
-                Column(modifier = Modifier.background(tableBackgroundColor)) {
-                    TableRow(
-                        rowIndex = rowIndex,
-                        columnCount = columnCount,
-                        maxColumnWidth = defaultColumnWidth,
-                        tableCellContent = cellContent,
-                        columnDivider = columnDivider,
-                        columnWidths = columnWidths,
-                        modifier = Modifier
-                            .onGloballyPositioned { rowWidth = it.size.width }
-                            .clickable {
-                                onRowClicked(rowIndex)
-                            },
-                    )
-
-                    itemDivider?.let { divider ->
-                        ItemDividerContainer(
-                            rowWidth = rowWidth.pxToDp(),
-                        ) {
-                            divider()
+                            itemDivider?.let { divider ->
+                                ItemDividerContainer(
+                                    rowWidth = rowWidth.pxToDp(),
+                                ) {
+                                    divider()
+                                }
+                            }
                         }
                     }
-
                 }
             }
         }
@@ -149,11 +165,6 @@ fun DataTable(
 }
 
 
-/**
- * Private helper function to handle rendering of a data row for either the header or the content.
- * each row renders tableHeaderContent or tableCellContent items for the number of columnCount
- *
- */
 @Composable
 private fun TableRow(
     rowIndex: Int,
@@ -174,7 +185,6 @@ private fun TableRow(
             ) {
                 tableCellContent(columnIndex, rowIndex)
             }
-
             columnDivider?.let { divider ->
                 ColumnDividerContainer(
                     modifier = Modifier.height(0.dp),
@@ -190,19 +200,11 @@ private fun TableRow(
 
 
 /**
- * Private helper function to render the header row of the table.
- * 
+ * Renders the header row of the table.
+ *
  * This composable creates a row containing the header cells and column dividers.
  * The column dividers can be dragged to resize the columns.
  *
- * @param modifier Modifier to be applied to the header row
- * @param columnCount The number of columns in the table
- * @param defaultColumnWidth The default width for columns if not specified individually
- * @param tableHeaderContent Composable function that defines the content of header cells
- * @param columnWidths Map of column indices to their widths
- * @param onColumnWidthChange Callback that is invoked when a column width changes
- * @param columnDivider Optional composable that defines the divider between columns
- * @param onColumnClicked Callback that is invoked when a column header is clicked
  */
 @Composable
 private fun HeaderRow(
@@ -251,7 +253,7 @@ private fun HeaderRow(
 
 /**
  * Default implementation of a column divider that can be dragged to resize columns.
- * 
+ *
  * This composable renders a vertical line that serves as a visual separator between columns
  * in the LazyDataTable. When used with ColumnDividerContainer, it becomes draggable to
  * allow column resizing.
@@ -282,7 +284,7 @@ fun DefaultColumnDivider(
 
 /**
  * Default implementation of a horizontal divider between rows in the LazyDataTable.
- * 
+ *
  * This composable renders a horizontal line that serves as a visual separator between rows
  * in the LazyDataTable. It's used by default in the itemDivider parameter of LazyDataTable
  * if no custom divider is provided.
@@ -347,3 +349,7 @@ private fun ItemDividerContainer(
 
 @Composable
 private fun Int.pxToDp() = with(LocalDensity.current) { this@pxToDp.toDp() }
+
+private fun buildColumnWidths(builder: SnapshotStateMap<Int, Dp>.() -> Unit): SnapshotStateMap<Int, Dp> {
+    return mutableStateMapOf<Int, Dp>().apply(builder)
+}

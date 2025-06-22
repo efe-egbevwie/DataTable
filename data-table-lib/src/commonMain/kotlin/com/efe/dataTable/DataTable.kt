@@ -6,16 +6,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -49,7 +40,6 @@ import androidx.compose.ui.unit.dp
  * @param onColumnClicked Callback that is invoked when a column header is clicked
  * @param cellContent Composable function that defines the content of each cell
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DataTable(
     defaultColumnWidth: Dp? = null,
@@ -96,7 +86,6 @@ fun DataTable(
     BoxWithConstraints(
         modifier = modifier
     ) {
-        var rowWidth by remember { mutableStateOf(0) }
         val constraints = this
         val maxWidth = constraints.maxWidth
         val singleColumnWidth = (maxWidth / (columnCount + 1))
@@ -142,20 +131,12 @@ fun DataTable(
                                 tableCellContent = cellContent,
                                 columnDivider = columnDivider,
                                 columnWidths = columnWidths,
+                                itemDivider = itemDivider,
                                 modifier = Modifier
-                                    .onGloballyPositioned { rowWidth = it.size.width }
                                     .clickable {
                                         onRowClicked(rowIndex)
                                     },
                             )
-
-                            itemDivider?.let { divider ->
-                                ItemDividerContainer(
-                                    rowWidth = rowWidth.pxToDp(),
-                                ) {
-                                    divider()
-                                }
-                            }
                         }
                     }
                 }
@@ -175,24 +156,41 @@ private fun TableRow(
     columnDivider: @Composable (() -> Unit?)? = {
         DefaultColumnDivider()
     },
+    itemDivider: @Composable (() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
-    Row(modifier = modifier.hoverable(interactionSource = remember { MutableInteractionSource() })) {
-        (0 until columnCount).forEach { columnIndex ->
-            Box(
-                modifier = Modifier
-                    .width(columnWidths[columnIndex] ?: maxColumnWidth)
-            ) {
-                tableCellContent(columnIndex, rowIndex)
-            }
-            columnDivider?.let { divider ->
-                ColumnDividerContainer(
-                    modifier = Modifier.height(0.dp),
-                    columnIndex = columnIndex,
-                    onWidthChange = { _, _ -> },
+    var rowWidth by remember { mutableStateOf(0) }
+    Column {
+        Row(
+            modifier = modifier
+                .hoverable(interactionSource = remember { MutableInteractionSource() })
+                .onGloballyPositioned { rowWidth = it.size.width }
+        ) {
+            repeat(columnCount) { columnIndex ->
+                Box(
+                    modifier = Modifier
+                        .width(columnWidths[columnIndex] ?: maxColumnWidth)
                 ) {
-                    divider()
+                    tableCellContent(columnIndex, rowIndex)
                 }
+
+                columnDivider?.let { divider ->
+                    ColumnDividerContainer(
+                        modifier = Modifier.height(0.dp),
+                        columnIndex = columnIndex,
+                        onWidthChange = { _, _ -> },
+                    ) {
+                        divider()
+                    }
+                }
+            }
+        }
+
+        itemDivider?.let { divider ->
+            ItemDividerContainer(
+                rowWidth = rowWidth.pxToDp(),
+            ) {
+                divider()
             }
         }
     }
@@ -226,7 +224,7 @@ private fun HeaderRow(
         modifier = modifier
             .onGloballyPositioned { rowHeight = it.size.height }
     ) {
-        (0 until columnCount).forEach { columnIndex ->
+        repeat(columnCount) { columnIndex ->
             Box(
                 modifier = Modifier
                     .width(columnWidths[columnIndex] ?: defaultColumnWidth)

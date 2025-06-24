@@ -73,7 +73,6 @@ fun DataTable(
     }
     val density = LocalDensity.current.density
     val fallBackColumnWidth = 180.dp
-
     val onColumnWidthChange = { columnIndex: Int, delta: Float ->
         val currentWidth = columnWidths[columnIndex] ?: fallBackColumnWidth
         val newWidth = (currentWidth.value + delta / density).dp
@@ -82,13 +81,14 @@ fun DataTable(
         }
     }
 
-
     BoxWithConstraints(
         modifier = modifier
     ) {
         val constraints = this
         val maxWidth = constraints.maxWidth
-        val singleColumnWidth = (maxWidth / (columnCount + 1))
+        var columnDividerWidth by remember { mutableStateOf(0) }
+        val totalColumnDividerWidth = columnDividerWidth.pxToDp() * columnCount
+        val singleColumnWidth = (maxWidth - totalColumnDividerWidth) / columnCount
 
         if (defaultColumnWidth != null) {
             columnWidths = buildColumnWidths {
@@ -116,6 +116,9 @@ fun DataTable(
                         defaultColumnWidth = defaultColumnWidth ?: fallBackColumnWidth,
                         tableHeaderContent = tableHeaderContent,
                         columnWidths = columnWidths,
+                        columnDividerWidth = { width ->
+                            columnDividerWidth = width
+                        },
                         onColumnWidthChange = onColumnWidthChange,
                         columnDivider = columnDivider,
                         onColumnClicked = onColumnClicked,
@@ -213,6 +216,7 @@ private fun HeaderRow(
     tableHeaderContent: @Composable ((Int) -> Unit),
     columnWidths: Map<Int, Dp>,
     onColumnWidthChange: (Int, Float) -> Unit,
+    columnDividerWidth: (Int) -> Unit,
     columnDivider: @Composable (() -> Unit?)? = {
         DefaultColumnDivider()
     },
@@ -237,7 +241,11 @@ private fun HeaderRow(
 
             columnDivider?.let { divider ->
                 ColumnDividerContainer(
-                    modifier = Modifier.height(rowHeight.pxToDp()),
+                    modifier = Modifier
+                        .height(rowHeight.pxToDp())
+                        .onGloballyPositioned {
+                            columnDividerWidth(it.size.width)
+                        },
                     columnIndex = columnIndex,
                     onWidthChange = onColumnWidthChange,
                 ) {
@@ -271,11 +279,6 @@ fun DefaultColumnDivider(
             .then(if (height != Dp.Unspecified) Modifier.height(height) else Modifier)
             .padding(vertical = 8.dp)
             .background(color = Color.White)
-    )
-
-    Spacer(
-        modifier = Modifier
-            .width(10.dp)
     )
 }
 

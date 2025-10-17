@@ -8,9 +8,9 @@ plugins {
     id("com.vanniktech.maven.publish") version "0.30.0"
     id("signing")
 }
-
+val dataTableVersion = "0.6.2"
 group = "io.github.efe-egbevwie"
-version = "0.6.1"
+version = dataTableVersion
 
 publishing {
     repositories {
@@ -111,7 +111,7 @@ mavenPublishing {
     coordinates(
         groupId = "io.github.efe-egbevwie",
         artifactId = "dataTable",
-        version = "0.6.1"
+        version = dataTableVersion
     )
 
     pom {

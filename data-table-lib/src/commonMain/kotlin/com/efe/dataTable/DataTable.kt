@@ -149,57 +149,6 @@ fun DataTable(
 }
 
 
-@Composable
-private fun TableRow(
-    rowIndex: Int,
-    columnCount: Int,
-    maxColumnWidth: Dp,
-    tableCellContent: @Composable ((Int, Int) -> Unit),
-    columnWidths: Map<Int, Dp>,
-    columnDivider: @Composable (() -> Unit?)? = {
-        DefaultColumnDivider()
-    },
-    itemDivider: @Composable (() -> Unit)?,
-    modifier: Modifier = Modifier
-) {
-    var rowWidth by remember { mutableStateOf(0) }
-    Column {
-        Row(
-            modifier = modifier
-                .hoverable(interactionSource = remember { MutableInteractionSource() })
-                .onGloballyPositioned { rowWidth = it.size.width }
-        ) {
-            repeat(columnCount) { columnIndex ->
-                Box(
-                    modifier = Modifier
-                        .width(columnWidths[columnIndex] ?: maxColumnWidth)
-                ) {
-                    tableCellContent(columnIndex, rowIndex)
-                }
-
-                columnDivider?.let { divider ->
-                    ColumnDividerContainer(
-                        modifier = Modifier.height(0.dp),
-                        columnIndex = columnIndex,
-                        onWidthChange = { _, _ -> },
-                    ) {
-                        divider()
-                    }
-                }
-            }
-        }
-
-        itemDivider?.let { divider ->
-            ItemDividerContainer(
-                rowWidth = rowWidth.pxToDp(),
-            ) {
-                divider()
-            }
-        }
-    }
-}
-
-
 /**
  * Renders the header row of the table.
  *
@@ -251,6 +200,56 @@ private fun HeaderRow(
                 ) {
                     divider()
                 }
+            }
+        }
+    }
+}
+
+
+
+@Composable
+private fun TableRow(
+    rowIndex: Int,
+    columnCount: Int,
+    maxColumnWidth: Dp,
+    tableCellContent: @Composable ((Int, Int) -> Unit),
+    columnWidths: Map<Int, Dp>,
+    columnDivider: @Composable (() -> Unit?)? = {
+        DefaultColumnDivider()
+    },
+    itemDivider: @Composable (() -> Unit)?,
+    modifier: Modifier = Modifier
+) {
+    Column (modifier = Modifier.width(IntrinsicSize.Max)){
+        Row(
+            modifier = modifier
+                .hoverable(interactionSource = remember { MutableInteractionSource() })
+        ) {
+            repeat(columnCount) { columnIndex ->
+                Box(
+                    modifier = Modifier
+                        .width(columnWidths[columnIndex] ?: maxColumnWidth)
+                ) {
+                    tableCellContent(columnIndex, rowIndex)
+                }
+
+                columnDivider?.let { divider ->
+                    ColumnDividerContainer(
+                        modifier = Modifier.height(0.dp),
+                        columnIndex = columnIndex,
+                        onWidthChange = { _, _ -> },
+                    ) {
+                        divider()
+                    }
+                }
+            }
+        }
+
+        itemDivider?.let { divider ->
+            ItemDividerContainer(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                divider()
             }
         }
     }
@@ -333,17 +332,10 @@ private fun ColumnDividerContainer(
 
 @Composable
 private fun ItemDividerContainer(
-    rowWidth: Dp,
     modifier: Modifier = Modifier,
     itemDivider: @Composable () -> Unit? = {}
 ) {
-    Box(
-        modifier = modifier
-            .then(
-                Modifier
-                    .width(rowWidth)
-            )
-    ) {
+    Box(modifier = modifier) {
         itemDivider()
     }
 }

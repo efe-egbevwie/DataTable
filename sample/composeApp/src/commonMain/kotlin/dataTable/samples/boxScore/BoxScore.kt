@@ -1,6 +1,119 @@
-package dataTable.sample
+package dataTable.samples.boxScore
 
-val gameStatsList = buildList {
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import com.efe.dataTable.DataTable
+import com.efe.dataTable.DefaultColumnDivider
+
+@Composable
+fun BoxScore(modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            BoxScoreTable(
+                playerStats = playerStatsList,
+                modifier = Modifier
+                    .clip(shape = MaterialTheme.shapes.small)
+            )
+        }
+    }
+}
+
+@Composable
+private fun BoxScoreTable(
+    playerStats: List<PlayerStats>,
+    modifier: Modifier = Modifier
+) {
+    DataTable(
+        modifier = modifier,
+        headerBackgroundColor = MaterialTheme.colorScheme.primary,
+        tableBackgroundColor = MaterialTheme.colorScheme.primaryContainer,
+        columnCount = 5,
+        rowCount = playerStats.size,
+        columnDivider = {
+            DefaultColumnDivider(
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .fillMaxHeight()
+            )
+        },
+        tableHeaderContent = { columnIndex: Int ->
+            val columnText = when (columnIndex) {
+                0 -> "Player"
+                1 -> "Minutes played"
+                2 -> "Points"
+                3 -> "Rebounds"
+                4 -> "Assists"
+                else -> ""
+            }
+
+            Text(
+                text = columnText,
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp),
+                textAlign = TextAlign.Start
+            )
+        },
+        cellContent = { columnIndex: Int, rowIndex: Int ->
+            val cellText = when (columnIndex) {
+                0 -> playerStats[rowIndex].playerName
+                1 -> playerStats[rowIndex].minutesPlayed.toString()
+                2 -> playerStats[rowIndex].points.toString()
+                3 -> playerStats[rowIndex].rebounds.toString()
+                4 -> playerStats[rowIndex].assists.toString()
+                else -> ""
+            }
+            SelectionContainer {
+                Text(
+                    text = cellText,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp),
+                    textAlign = TextAlign.Start
+                )
+            }
+        }
+    )
+
+}
+
+data class PlayerStats(
+    val playerId: Long,
+    val playerName: String,
+    val minutesPlayed: Int,
+    val points: Int,
+    val rebounds: Int,
+    val assists: Int
+)
+
+
+val playerStatsList = buildList {
     add(
         PlayerStats(
             playerId = 1,

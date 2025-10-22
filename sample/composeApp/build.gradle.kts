@@ -1,11 +1,12 @@
-import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.incremental.createDirectory
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.koltinxSerialization)
 }
 
 kotlin {
@@ -50,10 +51,10 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(project(":data-table-lib"))
-
+            implementation(libs.kotlinxSerialization)
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
+            implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
         }
@@ -113,3 +114,37 @@ compose.desktop {
 compose.experimental {
     web.application {}
 }
+
+compose.resources {
+    publicResClass = true
+    generateResClass = auto
+    packageOfResClass = "com.efe.dataTable"
+}
+
+
+tasks.register<Copy>("publishWasmToDocs") {
+    description = "Builds the sample app module wasmJs target to be served by github pages."
+    group = "publishing"
+
+    dependsOn(project(":sample:composeApp").tasks.named("wasmJsBrowserProductionExecutable"))
+
+    val wasmJsBuildDir = layout.projectDirectory.dir("build/dist/wasmJs/productionExecutable")
+    val docsDir = File("${rootDir.path}/docs")
+    from(wasmJsBuildDir)
+    into(    docsDir)
+
+    doFirst {
+        if (docsDir.exists()) {
+            println("Cleaning existing 'docs' directory...")
+            docsDir.deleteRecursively()
+        }else{
+            println("creating docs dir")
+            docsDir.createDirectory()
+        }
+    }
+
+    doLast {
+        println("Wasm files deployed!")
+    }
+}
+

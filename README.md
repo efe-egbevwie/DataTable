@@ -15,7 +15,7 @@ repositories {
 ```
 
 ```
-implementation("io.github.efe-egbevwie:dataTable:0.5.0")
+implementation("io.github.efe-egbevwie:dataTable:0.7.1")
 ```
 
 ### Usage

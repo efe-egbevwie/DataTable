@@ -8,7 +8,7 @@ plugins {
     id("com.vanniktech.maven.publish") version "0.30.0"
     id("signing")
 }
-val dataTableVersion = "0.6.2"
+val dataTableVersion = "0.7.1"
 group = "io.github.efe-egbevwie"
 version = dataTableVersion
 

@@ -54,7 +54,6 @@ fun DataTable(
         DefaultItemDivider(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
         )
     },
     columnDivider: @Composable (() -> Unit?)? = {
@@ -62,10 +61,10 @@ fun DataTable(
             modifier = Modifier.fillMaxHeight().padding(vertical = 8.dp),
         )
     },
-    onRowClicked: ((rowIndex: Int) -> Unit) = {},
+    onRowClicked: ((rowIndex: Int) -> Unit)? = null,
     onColumnClicked: ((columnIndex: Int) -> Unit) = {},
     tableHeaderContent: @Composable ((Int) -> Unit),
-    cellContent: @Composable ((Int, Int) -> Unit),
+    cellContent: @Composable (BoxScope.(columnIndex:Int, rowIndex:Int) -> Unit),
 ) {
 
     var columnWidths = remember {
@@ -136,9 +135,7 @@ fun DataTable(
                                 columnWidths = columnWidths,
                                 itemDivider = itemDivider,
                                 modifier = Modifier
-                                    .clickable {
-                                        onRowClicked(rowIndex)
-                                    },
+                                    .clickable(enabled = onRowClicked != null, onClick = { onRowClicked?.invoke(rowIndex) })
                             )
                         }
                     }
@@ -212,7 +209,7 @@ private fun TableRow(
     rowIndex: Int,
     columnCount: Int,
     maxColumnWidth: Dp,
-    tableCellContent: @Composable ((Int, Int) -> Unit),
+    tableCellContent: @Composable (BoxScope.(columnIndex:Int, rowIndex:Int) -> Unit),
     columnWidths: Map<Int, Dp>,
     columnDivider: @Composable (() -> Unit?)? = {
         DefaultColumnDivider()
@@ -224,11 +221,13 @@ private fun TableRow(
         Row(
             modifier = modifier
                 .hoverable(interactionSource = remember { MutableInteractionSource() })
+                .height(IntrinsicSize.Max)
         ) {
             repeat(columnCount) { columnIndex ->
                 Box(
                     modifier = Modifier
                         .width(columnWidths[columnIndex] ?: maxColumnWidth)
+                        .fillMaxHeight()
                 ) {
                     tableCellContent(columnIndex, rowIndex)
                 }
@@ -269,15 +268,15 @@ private fun TableRow(
 @Composable
 fun DefaultColumnDivider(
     modifier: Modifier = Modifier,
+    color: Color = Color.White,
     height: Dp = Dp.Unspecified,
 ) {
-
     Box(
         modifier = modifier
             .width(2.dp)
             .then(if (height != Dp.Unspecified) Modifier.height(height) else Modifier)
             .padding(vertical = 8.dp)
-            .background(color = Color.White)
+            .background(color = color)
     )
 }
 
@@ -293,12 +292,13 @@ fun DefaultColumnDivider(
  */
 @Composable
 fun DefaultItemDivider(
-    modifier: Modifier
+    modifier: Modifier,
+    color: Color = Color.White
 ) {
     Box(
         modifier = modifier
             .height(1.dp)
-            .background(color = Color.White)
+            .background(color = color)
     )
 }
 

@@ -1,12 +1,22 @@
 ## DataTable
-
+![](https://img.shields.io/badge/Platform-Android|iOS|Desktop|Web-orange)
+<br>
 A compose multiplatform library for rendering data in tables. Supports:
 - Android
 - ios
 - Web(Wasm)
 - Desktop
+<br>
+
+### Sample
+[View the web sample here ](https://efe-egbevwie.github.io/DataTable/)
 
 ### Dependency
+Latest version : <br>
+
+![](https://img.shields.io/maven-central/v/io.github.efe-egbevwie/dataTable)
+
+kotlin 1.9.22 or later supported
 
 ```
 repositories {  
@@ -15,7 +25,7 @@ repositories {
 ```
 
 ```
-implementation("io.github.efe-egbevwie:dataTable:0.7.1")
+implementation("io.github.efe-egbevwie:dataTable:$version")
 ```
 
 ### Usage

@@ -126,7 +126,7 @@ tasks.register<Copy>("publishWasmToDocs") {
     description = "Builds the sample app module wasmJs target to be served by github pages."
     group = "publishing"
 
-    dependsOn(project(":sample:composeApp").tasks.named("wasmJsBrowserProductionExecutable"))
+    dependsOn(project(":sample:composeApp").tasks.named(":wasmJsBrowserDistribution"))
 
     val wasmJsBuildDir = layout.projectDirectory.dir("build/dist/wasmJs/productionExecutable")
     val docsDir = File("${rootDir.path}/docs")

@@ -1,4 +1,4 @@
-name: Publish Artifacts
+name: Publish Library
 on:
   push:
     tags:
@@ -44,6 +44,3 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
           ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache --info --stacktrace --scan
-
-      - name: Deploy Sample wasmJs app
-        run: ./gradlew publishWasmToDocs

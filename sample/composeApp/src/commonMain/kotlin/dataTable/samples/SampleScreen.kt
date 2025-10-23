@@ -88,7 +88,7 @@ fun SampleScreen() {
                         Spacer(modifier = Modifier.width(10.dp))
 
                         ThemeSwitcher(
-                            isDarkTheme = isSystemInDarkTheme(),
+                            isDarkTheme = isDarkTheme,
                             onThemeChanged = { isDarkTheme = !isDarkTheme }
                         )
 
